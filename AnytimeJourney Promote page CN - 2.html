@@ -1,0 +1,159 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unlock Surprise</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url('https://i.imgur.com/5cn9oUC.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      background: rgba(108, 122, 137, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      color: #70c1e3;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    h2 {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      color: #70c1e3;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    h2 a {
+      color: #70c1e3;
+      text-decoration: none;
+    }
+    h2 a:hover {
+      text-decoration: underline;
+    }
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .button {
+      background-color: #2a7b9b;
+      color: white;
+      padding: 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .button:hover {
+      background-color: #1f5c75;
+    }
+    .button img {
+      width: 24px;
+      height: 24px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 2em;
+      }
+      h2 {
+        font-size: 1.2em;
+      }
+      .button-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+      .button {
+        padding: 15px;
+        font-size: 0.9em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ANYTIME JOURNEY</h1>
+    <h2><a href="https://anytimejourney.com" target="_blank">AnytimeJourney.com</a></h2>
+    <div class="button-grid">
+      <a href="https://www.xiaohongshu.com" target="_blank" class="button">
+        <img src="https://www.xiaohongshu.com/favicon.ico" alt="小紅書">
+        分享到小红书
+      </a>
+      <a href="https://www.instagram.com" target="_blank" class="button">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+        关注 Instagram
+      </a>
+      <a href="https://g.page/r/YOUR_GOOGLE_MAPS_REVIEW_LINK" target="_blank" class="button">
+        <img src="https://maps.google.com/favicon.ico" alt="Google">
+        Google 五星好评
+      </a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://yourwebsite.com" target="_blank" class="button">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook">
+        分享到 Facebook
+      </a>
+    </div>
+  </div>
+</body>
+</html>
